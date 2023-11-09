@@ -1,0 +1,40 @@
+
+
+---------------------RPG GAME---------------------------
+
+---------SCOPES----------
+1. RPG Fighting
+2. Overworld
+3. Enonomy/Shops
+4. Materials/Crafting
+
+--------RPG Fighting---------
+
+1. Player Stats
+2. Enemy Stats
+3. Attacking
+4. Tools/Weapons/Armor
+5. Skills/Magic
+6. Multi Battles
+7. Enemy Types
+
+
+---------Overworld----------
+
+1. Grid System
+2. Moving From Grid to Grid (try to get the world to move instead of the player)
+3. Animations to Make the Movement Smoother
+4. Entering Buildings
+5. Changing Locations
+6. Larger Overworld That Has Random Battle Encounters
+
+
+---------Economy/Shops----------
+
+1. Money
+2. Interactable NPCs
+3. Diolog Selection System
+4. Selectable and Purchasable Shop Items
+5. Have Enemys Drop Money
+
+---------Materials/Crafting-----------
