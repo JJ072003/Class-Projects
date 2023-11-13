@@ -1,10 +1,23 @@
 
+let globalWeapons = {}
 
-
+let globalArmor = {}
 
 function Start()
 {
+    globalWeapons = 
+    {
+        shortSword: new Weapon('Short Sword', new EquiptableStats(0, 10, 15, ["Slashing", "Piercing"], ["Cleeve", "Drill Strike"], "Simple"))
+    }
 
+    globalArmor = 
+    {
+        shortSword: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"], "Medium"))
+    }
+
+    const player = new Player(new WarriorClass())
+    
+    console.log(player)
 }
 
 
@@ -36,7 +49,20 @@ class Stats
 
 class DefaultEntity
 {
-    attack()
+    constructor(equiped, stats)
+    {
+        this.setEquiped(equiped)
+        this.stats = stats
+        this.freeHands
+    }
+
+
+    attack(enemy)
+    {
+        enemy.onHit(this.getDamage())
+    }
+
+    setEquiped(equiping)
     {
 
     }
@@ -46,7 +72,7 @@ class DefaultEntity
 
     }
 
-    onHit()
+    onHit(damage)
     {
 
     }
@@ -57,9 +83,9 @@ class Player extends DefaultEntity
 {
     constructor(myClass)
     {
+        super(myClass.startingGear, myClass.defaultStats)
         this.myClass = myClass
-        this.bag = []
-        this.addToBag()
+        this.bag = myClass.startingBag
     }
 
     equiptItem()
@@ -87,23 +113,22 @@ class DefaultEnemy extends DefaultEntity
 
 class EntityClass
 {
-    constructor(stats, skills, weaponTypes, startingGear)
+    constructor(stats, skills, weaponTypes, startingGear, startingBag)
     {
-        this.stats = stats
+        this.defaultStats = stats
         this.skills = skills
         this.weaponTypes = weaponTypes
         this.startingGear = startingGear
+        this.startingBag = startingBag
     }
 }
 
 
 class WarriorClass extends EntityClass
 {
-    
     constructor()
     {
-        super(new Stats(20, 12, 10, 8, 5, 13), null, null, [new Weapon(), new Armor()])
-        
+        super(new Stats(20, 12, 10, 8, 5, 13), null, ["Simple"], [globalWeapons.shortSword, new Armor()], new Bag())
     }
 }
 
@@ -126,7 +151,7 @@ class WarriorClass extends EntityClass
 
 class EquiptableStats
 {
-    constructor(armor, attack, damageType, skills, size)
+    constructor(armor, minAttack, maxAttack, damageType, skills, weaponType)
     {
 
     }
@@ -148,19 +173,28 @@ class Equiptable
     constructor(name)
     {
         this.name = name
+        this.equipStats = new EquiptableStats()
     }
 }
 
 
 class Weapon extends Equiptable
 {
-
+    constructor(name, equipStats)
+    {
+        super(name)
+        this.equipStats = equipStats
+    }
 }
 
 
 class Armor extends Equiptable
 {
-
+    constructor(name, equipStats)
+    {
+        super(name)
+        this.equipStats = equipStats
+    }
 }
 
 
