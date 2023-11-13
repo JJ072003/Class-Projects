@@ -31,6 +31,9 @@ main
 
 .action-bar-options
 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: gray;
     margin: 0;
 }
@@ -59,22 +62,22 @@ main
     z-index: 3;
 }
 
-#option-tl
+#option1
 {
     grid-column: 1 / 2;
 }
 
-#option-tr
+#option2
 {
     grid-column: 2 / 3;
 }
 
-#option-bl
+#option3
 {
     grid-column: 1 / 2;
 }
 
-#option-br
+#option4
 {
     grid-column: 2 / 3;
 }

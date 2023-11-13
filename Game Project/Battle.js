@@ -3,6 +3,11 @@ let globalWeapons = {}
 
 let globalArmor = {}
 
+let selectionCords = 1
+let selectorSkope = 4
+
+const actionBarEl = document.querySelector("#action-bar")
+
 function Start()
 {
     globalWeapons = 
@@ -15,15 +20,68 @@ function Start()
         chainMail: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"]), "Medium", 'body')
     }
 
-    const player = new Player(new WarriorClass())
-    
-    console.log(player.equipted.armor)
-    console.log(player.equipted.hands)
-    
-    const enemy = new DefaultEnemy(new Slime())
-    console.log(enemy)
-    
-    player.attack(enemy)
+    window.addEventListener("keydown", actionBarSelector)
+}
+
+
+function actionBarSelector(event)
+{
+    let previousSelect = null
+    switch(event.key.toUpperCase())
+    {
+        case "ARROWUP":
+            if(selectionCords > 2)
+            {
+                previousSelect = selectionCords
+                selectionCords -= 2
+            }
+            break
+        
+        case "ARROWDOWN":
+            if(selectionCords <= 2)
+            {
+                previousSelect = selectionCords
+                selectionCords += 2
+            }
+            break
+
+        case "ARROWLEFT":
+            if(selectionCords > 1)
+            {
+                previousSelect = selectionCords
+                selectionCords--
+            }
+            break
+
+        case "ARROWRIGHT":
+            if(selectionCords < selectorSkope)
+            {
+                previousSelect = selectionCords
+                selectionCords++
+            }
+            break
+
+        default:
+            previousSelect = null
+            break
+    }
+    if (previousSelect != null)
+    {
+        let previousOption = document.querySelector('#option' + previousSelect)
+        previousOption.style.backgroundColor = 'gray'
+    }
+
+    let activeOption = document.querySelector('#option' + selectionCords)
+    activeOption.style.backgroundColor = "blue"
+
+    switch(event.key.toUpperCase())
+    {
+        case "ENTER":
+            console.log(activeOption.textContent)
+
+        default:
+            break
+    }
 }
 
 
