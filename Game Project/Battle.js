@@ -19,6 +19,7 @@ function Start()
     
     console.log(player.equipted.armor)
     console.log(player.equipted.hands)
+    console.log(player.getDamage())
 }
 
 
@@ -26,11 +27,11 @@ function Start()
 
 class Stats
 {
-    constructor(strength, defence, agility, intelligence, mana, vitality)
+    constructor(strength, defence, dexterity, intelligence, mana, vitality)
     {
         this.strength = strength
         this.defence = defence
-        this.agility = agility
+        this.dexterity = dexterity
         this.intelligence = intelligence
         this.mana = mana
         this.vitality = vitality
@@ -95,7 +96,28 @@ class DefaultEntity
 
     getDamage()
     {
-        
+        for (const item in this.equipted.hands) 
+        {
+            if(this.equipted.hands[item] != null)
+            {
+                console.log(this.equipted.hands[item])
+                switch(this.equipted.hands[item].equiptType.toUpperCase())
+                {
+                    case "SIMPLE":
+                        console.log('test')
+                        return this.getRandNum(this.equipted.hands[item].equipStats.minAttack, this.equipted.hands[item].equipStats.maxAttack) + ((Math.max(this.stats.strength, this.stats.dexterity) / 100) * this.equipted.hands[item].equipStats.maxAttack)
+                
+                    default:
+                        break
+                } 
+            }
+        }
+    }
+
+    getRandNum(min, max)
+    {
+        console.log(min, max)
+        return Math.floor((Math.random() * (max - min + 1)) + min)
     }
 
     onHit(damage)
@@ -174,7 +196,11 @@ class EquiptableStats
 {
     constructor(armor, minAttack, maxAttack, damageType, skills)
     {
-        
+        this.armor = armor
+        this.minAttack = minAttack
+        this.maxAttack = maxAttack
+        this.damageType = damageType
+        this.skills = skills
     }
 }
 
