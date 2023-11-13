@@ -19,10 +19,20 @@ function Start()
     
     console.log(player.equipted.armor)
     console.log(player.equipted.hands)
-    console.log(player.getDamage())
+    player.onHit(5)
 }
 
 
+function getRandNum(min, max)
+{
+    return Math.floor((Math.random() * (max - min + 1)) + min)
+}
+
+
+function clampNum(min, max, num)
+{
+    return Math.min(Math.max(num, min), max)
+} 
 
 
 class Stats
@@ -34,7 +44,8 @@ class Stats
         this.dexterity = dexterity
         this.intelligence = intelligence
         this.mana = mana
-        this.vitality = vitality
+        this.totalVitality = vitality
+        this.currentVitality = vitality
     }
 }
 
@@ -100,29 +111,25 @@ class DefaultEntity
         {
             if(this.equipted.hands[item] != null)
             {
-                console.log(this.equipted.hands[item])
                 switch(this.equipted.hands[item].equiptType.toUpperCase())
                 {
                     case "SIMPLE":
-                        console.log('test')
-                        return this.getRandNum(this.equipted.hands[item].equipStats.minAttack, this.equipted.hands[item].equipStats.maxAttack) + ((Math.max(this.stats.strength, this.stats.dexterity) / 100) * this.equipted.hands[item].equipStats.maxAttack)
+                        return getRandNum(this.equipted.hands[item].equipStats.minAttack, this.equipted.hands[item].equipStats.maxAttack) + ((Math.max(this.stats.strength, this.stats.dexterity) / 100) * this.equipted.hands[item].equipStats.maxAttack)
                 
                     default:
                         break
-                } 
+                }
             }
         }
     }
 
-    getRandNum(min, max)
-    {
-        console.log(min, max)
-        return Math.floor((Math.random() * (max - min + 1)) + min)
-    }
-
     onHit(damage)
     {
-
+        if(clampNum(0, 1, ((getRandNum(0, 20) - 10) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
+        {
+            this.stats.currentVitality -= damage
+            console.log(this.stats.currentVitality)
+        }
     }
 }
 
@@ -171,7 +178,7 @@ class WarriorClass extends EntityClass
 {
     constructor()
     {
-        super(new Stats(20, 12, 10, 8, 5, 13), null, ["Simple"], [globalWeapons.shortSword, globalArmor.chainMail], new Bag())
+        super(new Stats(20, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword, globalArmor.chainMail], new Bag())
     }
 }
 
