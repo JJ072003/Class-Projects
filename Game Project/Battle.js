@@ -7,17 +7,18 @@ function Start()
 {
     globalWeapons = 
     {
-        shortSword: new Weapon('Short Sword', new EquiptableStats(0, 10, 15, ["Slashing", "Piercing"], ["Cleeve", "Drill Strike"], "Simple"))
+        shortSword: new Weapon('Short Sword', new EquiptableStats(0, 10, 15, ["Slashing", "Piercing"], ["Cleeve", "Drill Strike"]), "Simple")
     }
 
     globalArmor = 
     {
-        shortSword: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"], "Medium"))
+        chainMail: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"]), "Medium", 'body')
     }
 
     const player = new Player(new WarriorClass())
     
-    console.log(player)
+    console.log(player.equipted.armor)
+    console.log(player.equipted.hands)
 }
 
 
@@ -49,11 +50,11 @@ class Stats
 
 class DefaultEntity
 {
-    constructor(equiped, stats)
+    constructor(equipted, stats)
     {
-        this.setEquiped(equiped)
+        this.equipted = {armor: {head: null, body: null, pants: null, boots: null, gloves: null}, hands: {left: null, right: null}}
+        this.equiptItems(equipted)
         this.stats = stats
-        this.freeHands
     }
 
 
@@ -62,14 +63,39 @@ class DefaultEntity
         enemy.onHit(this.getDamage())
     }
 
-    setEquiped(equiping)
+    equiptItems(equipting)
     {
+        for (const item of equipting) 
+        {
+            switch(item.equiptType.toUpperCase())
+            {
+                case "SIMPLE":
+                    if(this.equipted.hands.right == null)
+                    {
+                        this.equipted.hands.right = item
+                    }
+                    else if (this.equipted.hands.left == null)
+                    {
+                        this.equipted.hands.left = item
+                    }
+                    break
 
+                case "MEDIUM":
+                    if(this.equipted.armor[item.slot] == null)
+                    {
+                        this.equipted.armor[item.slot] = item
+                    }  
+                    break
+
+                default:
+                    break
+            }
+        }
     }
 
     getDamage()
     {
-
+        
     }
 
     onHit(damage)
@@ -86,11 +112,6 @@ class Player extends DefaultEntity
         super(myClass.startingGear, myClass.defaultStats)
         this.myClass = myClass
         this.bag = myClass.startingBag
-    }
-
-    equiptItem()
-    {
-
     }
 
     static onDeath()
@@ -128,7 +149,7 @@ class WarriorClass extends EntityClass
 {
     constructor()
     {
-        super(new Stats(20, 12, 10, 8, 5, 13), null, ["Simple"], [globalWeapons.shortSword, new Armor()], new Bag())
+        super(new Stats(20, 12, 10, 8, 5, 13), null, ["Simple"], [globalWeapons.shortSword, globalArmor.chainMail], new Bag())
     }
 }
 
@@ -151,9 +172,9 @@ class WarriorClass extends EntityClass
 
 class EquiptableStats
 {
-    constructor(armor, minAttack, maxAttack, damageType, skills, weaponType)
+    constructor(armor, minAttack, maxAttack, damageType, skills)
     {
-
+        
     }
 }
 
@@ -170,30 +191,30 @@ class ToolStats
 
 class Equiptable
 {
-    constructor(name)
+    constructor(name, equipStats, equiptType)
     {
         this.name = name
-        this.equipStats = new EquiptableStats()
+        this.equipStats = equipStats
+        this.equiptType = equiptType
     }
 }
 
 
 class Weapon extends Equiptable
 {
-    constructor(name, equipStats)
+    constructor(name, equipStats, equiptType)
     {
-        super(name)
-        this.equipStats = equipStats
+        super(name, equipStats, equiptType)
     }
 }
 
 
 class Armor extends Equiptable
 {
-    constructor(name, equipStats)
+    constructor(name, equipStats, equiptType, slot)
     {
-        super(name)
-        this.equipStats = equipStats
+        super(name, equipStats, equiptType)
+        this.slot = slot
     }
 }
 
