@@ -7,7 +7,7 @@ function Start()
 {
     globalWeapons = 
     {
-        shortSword: new Weapon('Short Sword', new EquiptableStats(0, 10, 15, ["Slashing", "Piercing"], ["Cleeve", "Drill Strike"]), "Simple")
+        shortSword: new Weapon('Short Sword', new EquiptableStats(0, 10, 15, ["Slashing", "Piercing"], ["Cleeve", "Drill Strike"]), "Simple"),
     }
 
     globalArmor = 
@@ -19,7 +19,11 @@ function Start()
     
     console.log(player.equipted.armor)
     console.log(player.equipted.hands)
-    player.onHit(5)
+    
+    const enemy = new DefaultEnemy(new Slime())
+    console.log(enemy)
+    
+    player.attack(enemy)
 }
 
 
@@ -77,30 +81,33 @@ class DefaultEntity
 
     equiptItems(equipting)
     {
-        for (const item of equipting) 
+        if(equipting != null)
         {
-            switch(item.equiptType.toUpperCase())
+            for (const item of equipting) 
             {
-                case "SIMPLE":
-                    if(this.equipted.hands.right == null)
-                    {
-                        this.equipted.hands.right = item
-                    }
-                    else if (this.equipted.hands.left == null)
-                    {
-                        this.equipted.hands.left = item
-                    }
-                    break
+                switch(item.equiptType.toUpperCase())
+                {
+                    case "SIMPLE":
+                        if(this.equipted.hands.right == null)
+                        {
+                            this.equipted.hands.right = item
+                        }
+                        else if (this.equipted.hands.left == null)
+                        {
+                            this.equipted.hands.left = item
+                        }
+                        break
 
-                case "MEDIUM":
-                    if(this.equipted.armor[item.slot] == null)
-                    {
-                        this.equipted.armor[item.slot] = item
-                    }  
-                    break
+                    case "MEDIUM":
+                        if(this.equipted.armor[item.slot] == null)
+                        {
+                            this.equipted.armor[item.slot] = item
+                        }  
+                        break
 
-                default:
-                    break
+                    default:
+                        break
+                }
             }
         }
     }
@@ -123,9 +130,14 @@ class DefaultEntity
         }
     }
 
+    getDefence()
+    {
+
+    }
+
     onHit(damage)
     {
-        if(clampNum(0, 1, ((getRandNum(0, 20) - 10) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
+        if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
             this.stats.currentVitality -= damage
             console.log(this.stats.currentVitality)
@@ -152,8 +164,15 @@ class Player extends DefaultEntity
 
 class DefaultEnemy extends DefaultEntity
 {
-
+    constructor(enemyType)
+    {
+        super(enemyType.startingGear, enemyType.defaultStats)
+        this.enemyType = enemyType
+        this.bag = enemyType.startingBag
+    }
 }
+
+
 
 
 // -----------------------
@@ -174,11 +193,20 @@ class EntityClass
 }
 
 
+class Slime extends EntityClass
+{
+    constructor()
+    {
+        super(new Stats(5, 2, 2, 1, 0, 5), ["Flurry Of Blows"], null, null, null)
+    }
+}
+
+
 class WarriorClass extends EntityClass
 {
     constructor()
     {
-        super(new Stats(20, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword, globalArmor.chainMail], new Bag())
+        super(new Stats(20, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword], new Bag())
     }
 }
 
