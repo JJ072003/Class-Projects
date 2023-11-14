@@ -5,8 +5,11 @@ let globalArmor = {}
 
 let selectionCords = 1
 let selectorSkope = 4
+let selectionTarget = '#option'
 
 const actionBarEl = document.querySelector("#action-bar")
+
+let player
 
 function Start()
 {
@@ -21,6 +24,8 @@ function Start()
     }
 
     window.addEventListener("keydown", actionBarSelector)
+
+    player = new Player(new WarriorClass())
 }
 
 
@@ -67,20 +72,24 @@ function actionBarSelector(event)
     }
     if (previousSelect != null)
     {
-        let previousOption = document.querySelector('#option' + previousSelect)
+        let previousOption = document.querySelector(selectionTarget + previousSelect)
+        console.log(previousOption)
         previousOption.style.backgroundColor = 'gray'
     }
 
-    let activeOption = document.querySelector('#option' + selectionCords)
+    let activeOption = document.querySelector(selectionTarget + selectionCords)
+    console.log(activeOption)
     activeOption.style.backgroundColor = "blue"
-
-    switch(event.key.toUpperCase())
+    if(event.key.toUpperCase() == " ")
     {
-        case "ENTER":
-            console.log(activeOption.textContent)
+        switch(activeOption.getAttribute('name').toUpperCase())
+        {
+            case "ATTACK":
+                selectionTarget = "#enemy"
 
-        default:
-            break
+            default:
+                break
+        }
     }
 }
 

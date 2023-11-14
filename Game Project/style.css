@@ -23,15 +23,29 @@ main
 
 .fighter-container
 {
+    display: flex;
+
+
     position: absolute;
     background-color: green;
     height: 25%;
     width: 50%;
 }
 
+.all-enemies
+{
+    width: 20%;
+    height: 60%;
+
+    margin: 5%;
+    background-color: gray;
+}
+
 .action-bar-options
 {
     display: flex;
+
+    font-size: 3vw;
     justify-content: center;
     align-items: center;
     background-color: gray;
