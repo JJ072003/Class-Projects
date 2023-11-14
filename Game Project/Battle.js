@@ -24,14 +24,14 @@ function Start()
         chainMail: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"]), "Medium", 'body')
     }
 
-    window.addEventListener("keydown", actionBarSelector)
+    window.addEventListener("keydown", onKeyPress)
 
     player.push(new Player(new WarriorClass()))
     enemies.push(new DefaultEnemy(new Slime()))
 }
 
 
-function actionBarSelector(event)
+function onKeyPress(event)
 {
     let previousSelect = null
     switch(event.key.toUpperCase())
@@ -72,6 +72,7 @@ function actionBarSelector(event)
             previousSelect = null
             break
     }
+
     if (previousSelect != null)
     {
         let previousOption = document.querySelector(selectionTarget + previousSelect)
@@ -97,7 +98,7 @@ function actionBarSelector(event)
         {
             case "ENEMY":
                 let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
-                player[0].attack(enemies[enemyPos])
+                player[0].attack(enemies[enemyPos], enemyPos)
                 activeOption.style.backgroundColor = 'gray'
                 selectionTarget = "#option"
 
@@ -155,9 +156,9 @@ class DefaultEntity
     }
 
 
-    attack(enemy)
+    attack(enemy, enemyNum)
     {
-        enemy.onHit(this.getDamage())
+        enemy.onHit(this.getDamage(), enemyNum)
     }
 
     equiptItems(equipting)
@@ -216,12 +217,17 @@ class DefaultEntity
 
     }
 
-    onHit(damage)
+    onHit(damage, entityNum)
     {
         if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
             this.stats.currentVitality -= damage
             console.log(this.stats.currentVitality)
+        }
+
+        if (this.stats.currentVitality <= 0)
+        {
+            this.onDeath()
         }
     }
 }
@@ -236,7 +242,7 @@ class Player extends DefaultEntity
         this.bag = myClass.startingBag
     }
 
-    static onDeath()
+    onDeath(playerNum)
     {
 
     }
@@ -250,6 +256,12 @@ class DefaultEnemy extends DefaultEntity
         super(enemyType.startingGear, enemyType.defaultStats)
         this.enemyType = enemyType
         this.bag = enemyType.startingBag
+    }
+
+    onDeath(enemyNum)
+    {
+        console.log("DIED")
+        enemies.splice(enemyNum, 1)
     }
 }
 
