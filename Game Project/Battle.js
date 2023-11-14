@@ -3,9 +3,12 @@ let globalWeapons = {}
 
 let globalArmor = {}
 
+const activeSkopes = {optionsSkope: 4, enemySkope: 0}
 let selectionCords = 1
 let selectorSkope = 4
 let selectionTarget = '#option'
+
+let isBarSelector = false
 
 const enemyContEl = document.querySelector("#enemy-container")
 
@@ -43,6 +46,8 @@ function initalizeEnemies()
         enemyEl.id = 'enemy' + i
         enemyContEl.appendChild(enemyEl)
     }
+
+    activeSkopes.enemySkope = enemies.length
 }
 
 
@@ -55,6 +60,7 @@ function removeEnemy(enemyID)
         console.log(i)
         document.querySelector('#enemy' + i).id = 'enemy' + (i - 1)
     }
+    activeSkopes.enemySkope--
 }
 
 
@@ -64,7 +70,7 @@ function onKeyPress(event)
     switch(event.key.toUpperCase())
     {
         case "ARROWUP":
-            if(selectionCords > 2)
+            if(selectionCords > 2 && !isBarSelector)
             {
                 previousSelect = selectionCords
                 selectionCords -= 2
@@ -72,7 +78,7 @@ function onKeyPress(event)
             break
         
         case "ARROWDOWN":
-            if(selectionCords <= 2)
+            if(selectionCords <= 2 && !isBarSelector)
             {
                 previousSelect = selectionCords
                 selectionCords += 2
@@ -116,6 +122,9 @@ function onKeyPress(event)
             case "ATTACK":
                 selectionTarget = "#enemy"
                 activeOption.style.backgroundColor = 'gray'
+                selectorSkope = activeSkopes.enemySkope
+                console.log(selectorSkope)
+                isBarSelector = true
 
             default:
                 break
@@ -128,6 +137,8 @@ function onKeyPress(event)
                 player[0].attack(enemies[enemyPos], enemyPos)
                 activeOption.style.backgroundColor = 'gray'
                 selectionTarget = "#option"
+                selectorSkope = activeSkopes.optionsSkope
+                isBarSelector = false
 
             default:
                 break
