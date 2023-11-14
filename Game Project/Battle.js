@@ -75,12 +75,10 @@ function actionBarSelector(event)
     if (previousSelect != null)
     {
         let previousOption = document.querySelector(selectionTarget + previousSelect)
-        console.log(previousOption)
         previousOption.style.backgroundColor = 'gray'
     }
 
     let activeOption = document.querySelector(selectionTarget + selectionCords)
-    console.log(activeOption)
     activeOption.style.backgroundColor = "blue"
 
     if(event.key.toUpperCase() == " ")
@@ -89,6 +87,7 @@ function actionBarSelector(event)
         {
             case "ATTACK":
                 selectionTarget = "#enemy"
+                activeOption.style.backgroundColor = 'gray'
 
             default:
                 break
@@ -99,6 +98,8 @@ function actionBarSelector(event)
             case "ENEMY":
                 let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
                 player[0].attack(enemies[enemyPos])
+                activeOption.style.backgroundColor = 'gray'
+                selectionTarget = "#option"
 
             default:
                 break
