@@ -9,7 +9,8 @@ let selectionTarget = '#option'
 
 const actionBarEl = document.querySelector("#action-bar")
 
-let player
+const player = []
+const enemies = []
 
 function Start()
 {
@@ -25,7 +26,8 @@ function Start()
 
     window.addEventListener("keydown", actionBarSelector)
 
-    player = new Player(new WarriorClass())
+    player.push(new Player(new WarriorClass()))
+    enemies.push(new DefaultEnemy(new Slime()))
 }
 
 
@@ -80,12 +82,23 @@ function actionBarSelector(event)
     let activeOption = document.querySelector(selectionTarget + selectionCords)
     console.log(activeOption)
     activeOption.style.backgroundColor = "blue"
+
     if(event.key.toUpperCase() == " ")
     {
-        switch(activeOption.getAttribute('name').toUpperCase())
+        switch(activeOption.textContent.toUpperCase())
         {
             case "ATTACK":
                 selectionTarget = "#enemy"
+
+            default:
+                break
+        }
+
+        switch(activeOption.id.toUpperCase().slice(0, -1))
+        {
+            case "ENEMY":
+                let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+                player[0].attack(enemies[enemyPos])
 
             default:
                 break
