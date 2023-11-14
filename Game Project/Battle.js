@@ -7,6 +7,8 @@ let selectionCords = 1
 let selectorSkope = 4
 let selectionTarget = '#option'
 
+const enemyContEl = document.querySelector("#enemy-container")
+
 const actionBarEl = document.querySelector("#action-bar")
 
 const player = []
@@ -27,7 +29,32 @@ function Start()
     window.addEventListener("keydown", onKeyPress)
 
     player.push(new Player(new WarriorClass()))
-    enemies.push(new DefaultEnemy(new Slime()))
+    enemies.push(new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()))
+    initalizeEnemies()
+}
+
+
+function initalizeEnemies()
+{
+    for (let i = 1; i <= enemies.length; i++) 
+    {
+        let enemyEl = document.createElement('div')
+        enemyEl.className = "all-enemies"
+        enemyEl.id = 'enemy' + i
+        enemyContEl.appendChild(enemyEl)
+    }
+}
+
+
+function removeEnemy(enemyID)
+{
+    document.querySelector('#enemy' + (enemyID + 1)).remove()
+    selectorSkope--
+    for (let i = enemyID + 2; i <= enemies.length + 1; i++) 
+    {
+        console.log(i)
+        document.querySelector('#enemy' + i).id = 'enemy' + (i - 1)
+    }
 }
 
 
@@ -227,7 +254,7 @@ class DefaultEntity
 
         if (this.stats.currentVitality <= 0)
         {
-            this.onDeath()
+            this.onDeath(entityNum)
         }
     }
 }
@@ -260,8 +287,10 @@ class DefaultEnemy extends DefaultEntity
 
     onDeath(enemyNum)
     {
+        console.log(enemyNum)
         console.log("DIED")
         enemies.splice(enemyNum, 1)
+        removeEnemy(enemyNum)
     }
 }
 
