@@ -12,6 +12,7 @@ let isBarSelector = false
 let onButtonRunning = false
 
 const enemyContEl = document.querySelector("#enemy-container")
+const playerContEL = document.querySelector("#player-container")
 
 const actionBarEl = document.querySelector("#action-bar")
 
@@ -30,11 +31,12 @@ function Start()
         chainMail: new Armor('Chain Mail', new EquiptableStats(10, 0, 0, [null], ["Defend"]), "Medium", 'body')
     }
 
-    window.addEventListener("keydown", onKeyPress)
-
     player.push(new Player(new WarriorClass()))
 
+    initalizePlayers()
     initalizeEnemies()
+
+    window.addEventListener("keydown", onKeyPress)
 }
 
 
@@ -60,18 +62,36 @@ async function initalizeEnemies()
         enemyEl.id = 'enemy' + i
 
         let enemyImg = document.createElement('img')
-        enemyImg.className = "enemy-img"
+        enemyImg.className = "entity-img"
         enemyImg.setAttribute('src', 'Images/' + enemies[i-1].enemyType.enemyType + '.png')
         enemyEl.appendChild(enemyImg)
 
         let enemyDmgNum = document.createElement('h1')
-        enemyDmgNum.className = 'enemy-damage-number'
+        enemyDmgNum.className = 'entity-damage-number'
         enemyEl.appendChild(enemyDmgNum)
 
         enemyContEl.appendChild(enemyEl)
     }
 
     activeSkopes.enemySkope = enemies.length
+}
+
+
+async function initalizePlayers()
+{
+    for (let i = 1; i <= player.length; i++) 
+    {
+        let playerEL = document.createElement('div')
+        playerEL.className = "all-players"
+        playerEL.id = "player" + i
+
+        let playerIMGEL = document.createElement('img')
+        playerIMGEL.className = 'entity-img'
+        playerIMGEL.setAttribute('src', 'Images/' + player[i-1].myClass.playerType + '.png')
+
+        playerEL.appendChild(playerIMGEL)
+        playerContEL.appendChild(playerEL)
+    }
 }
 
 
@@ -155,11 +175,14 @@ async function onSpaceKey(keyPress, activeOption)
 async function onEnemySelect(activeOption)
 {
     let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+
     await player[0].attack(enemies[enemyPos], enemyPos, player[0])
+
     activeOption.style.backgroundColor = 'gray'
     selectionTarget = "#option"
     selectorSkope = activeSkopes.optionsSkope
     isBarSelector = false
+
     if(enemies.length != 0)
     {
         await new Promise((resolve, reject) => {setTimeout(() => resolve(enemysAttack()), 300)})
@@ -170,6 +193,12 @@ async function onEnemySelect(activeOption)
 
         await new Promise((resolve, reject) => {setTimeout(() => resolve(initalizeEnemies()), 2)})
     }
+}
+
+
+function onBattleWin()
+{
+
 }
 
 
@@ -482,6 +511,7 @@ class WarriorClass extends EntityClass
     constructor()
     {
         super(new Stats(30, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword], new Bag())
+        this.playerType = "Warrior-Player"
     }
 }
 

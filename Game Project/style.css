@@ -21,19 +21,20 @@ main
     height: 40vw;
 }
 
-.enemy-damage-number
+.entity-damage-number
 {
     display: flex;
     justify-content: center;
     position: absolute;
     top: -120%;
     left: -20%;
+    color: red;
     font-size: 3vw;
     width: 150%;
     height: 50%;
 }
 
-.enemy-img
+.entity-img
 {
     width: 100%;
     height: 100%;
@@ -42,7 +43,7 @@ main
 .fighter-container
 {
     display: flex;
-
+    justify-content: space-around;
 
     position: absolute;
     background-color: green;
@@ -51,6 +52,16 @@ main
 }
 
 .all-enemies
+{
+    position: relative;
+    width: 15%;
+    height: 60%;
+
+    margin: 5%;
+    background-color: gray;
+}
+
+.all-players
 {
     position: relative;
     width: 15%;
@@ -69,6 +80,16 @@ main
     align-items: center;
     background-color: gray;
     margin: 0;
+}
+
+#screen-cover
+{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    background-color: black;
+    z-index: 5;
 }
 
 #act-bar-grid-cont
@@ -124,8 +145,6 @@ main
 
 #enemy-container
 {
-    display: flex;
-    justify-content: space-around;
 
     top: 10%;
     right: 5%;
