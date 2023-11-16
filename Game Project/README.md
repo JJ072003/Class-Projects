@@ -1,0 +1,1 @@
+this is a simple RPG battle template made to run on a web server or live server
