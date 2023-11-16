@@ -97,6 +97,8 @@ function onKeyPress(event)
     
     onSpaceKey(event.key.toUpperCase(), activeOption)
 
+    onArrowKeys('')
+
     onButtonRunning = false
 }
 
@@ -133,8 +135,8 @@ function onSpaceKey(keyPress, activeOption)
                 }
                 else
                 {
-                    alert('Battle Won!')
-                    initalizeEnemies()
+                    setTimeout(() => {alert('Battle Won!')}, 1)
+                    setTimeout(() => {initalizeEnemies()}, 2)
                 }
 
             default:
@@ -359,7 +361,7 @@ class Player extends DefaultEntity
 
     onDeath(playerNum, attackingEnemy)
     {
-        alert('Game Over')
+        setTimeout(() => {alert('Game Over')}, 1)
     }
 }
 
