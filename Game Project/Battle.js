@@ -38,7 +38,7 @@ function Start()
 }
 
 
-function initalizeEnemies()
+async function initalizeEnemies()
 {
     for (let i = getRandNum(1, 4); i <= 4; i++) 
     {
@@ -64,6 +64,10 @@ function initalizeEnemies()
         enemyImg.setAttribute('src', 'Images/' + enemies[i-1].enemyType.enemyType + '.png')
         enemyEl.appendChild(enemyImg)
 
+        let enemyDmgNum = document.createElement('h1')
+        enemyDmgNum.className = 'enemy-damage-number'
+        enemyEl.appendChild(enemyDmgNum)
+
         enemyContEl.appendChild(enemyEl)
     }
 
@@ -84,7 +88,7 @@ function removeEnemy(enemyID)
 }
 
 
-function onKeyPress(event)
+async function onKeyPress(event)
 {
     if(onButtonRunning)
     {
@@ -93,17 +97,17 @@ function onKeyPress(event)
     onButtonRunning = true
     let previousSelect = null
 
-    let activeOption = onArrowKeys(event.key.toUpperCase())
+    let activeOption = await onArrowKeys(event.key.toUpperCase())
     
-    onSpaceKey(event.key.toUpperCase(), activeOption)
+    await onSpaceKey(event.key.toUpperCase(), activeOption)
 
-    onArrowKeys('')
+    await onArrowKeys('')
 
     onButtonRunning = false
 }
 
 
-function onSpaceKey(keyPress, activeOption)
+async function onSpaceKey(keyPress, activeOption)
 {
     if(keyPress == " ")
     {
@@ -123,21 +127,23 @@ function onSpaceKey(keyPress, activeOption)
         switch(activeOption.id.toUpperCase().slice(0, -1))
         {
             case "ENEMY":
-                let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
-                player[0].attack(enemies[enemyPos], enemyPos, player[0])
-                activeOption.style.backgroundColor = 'gray'
-                selectionTarget = "#option"
-                selectorSkope = activeSkopes.optionsSkope
-                isBarSelector = false
-                if(enemies.length != 0)
-                {
-                    enemysAttack()
-                }
-                else
-                {
-                    setTimeout(() => {alert('Battle Won!')}, 1)
-                    setTimeout(() => {initalizeEnemies()}, 2)
-                }
+                await onEnemySelect(activeOption)
+                break
+                // let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+                // player[0].attack(enemies[enemyPos], enemyPos, player[0])
+                // activeOption.style.backgroundColor = 'gray'
+                // selectionTarget = "#option"
+                // selectorSkope = activeSkopes.optionsSkope
+                // isBarSelector = false
+                // if(enemies.length != 0)
+                // {
+                //     enemysAttack()
+                // }
+                // else
+                // {
+                //     setTimeout(() => {alert('Battle Won!')}, 1)
+                //     setTimeout(() => {initalizeEnemies()}, 2)
+                // }
 
             default:
                 break
@@ -146,7 +152,41 @@ function onSpaceKey(keyPress, activeOption)
 }
 
 
-function onArrowKeys(keyPress)
+async function onEnemySelect(activeOption)
+{
+    let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+    await player[0].attack(enemies[enemyPos], enemyPos, player[0])
+    activeOption.style.backgroundColor = 'gray'
+    selectionTarget = "#option"
+    selectorSkope = activeSkopes.optionsSkope
+    isBarSelector = false
+    if(enemies.length != 0)
+    {
+        await new Promise((resolve, reject) => {setTimeout(() => resolve(enemysAttack()), 300)})
+    }
+    else
+    {
+        await new Promise((resolve, reject) => {setTimeout(() => resolve(alert('Battle Won!')), 1) } )
+
+        await new Promise((resolve, reject) => {setTimeout(() => resolve(initalizeEnemies()), 2)})
+    }
+}
+
+
+async function displayDamageNumber(damage, damagedEl)
+{
+    console.log(damagedEl)
+    try
+    {
+    damagedEl.lastChild.textContent = damage
+    }
+    catch(error)
+    {}
+    return
+}
+
+
+async function onArrowKeys(keyPress)
 {
     let previousSelect = null
     switch(keyPress)
@@ -200,11 +240,14 @@ function onArrowKeys(keyPress)
 }
 
 
-function enemysAttack()
+async function enemysAttack()
 {
     for (const enemy of enemies) 
     {
-        enemy.attack(player[0])
+        console.log('test')
+        await new Promise((resolve, reject) => {setTimeout(() => 
+            {resolve(enemy.attack(player[0]))},
+             100 * (enemy + 1))})
     }
 }
 
@@ -256,9 +299,9 @@ class DefaultEntity
     }
 
 
-    attack(enemy, enemyNum, attackerEntity)
+    async attack(enemy, enemyNum, attackerEntity)
     {
-        enemy.onHit(this.getDamage(), enemyNum, attackerEntity)
+        await enemy.onHit(this.getDamage(), enemyNum, attackerEntity)
     }
 
     equiptItems(equipting)
@@ -321,19 +364,26 @@ class DefaultEntity
 
     }
 
-    onHit(damage, entityNum, attackingEntity)
+    async onHit(damage, entityNum, attackingEntity)
     {
         if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
             this.stats.currentVitality -= damage
+            
+            console.log("entity Num " + entityNum)
+            console.log(selectionTarget)
+            await displayDamageNumber(damage, document.querySelector(selectionTarget + (entityNum + 1)))
+            console.log('success')
+                
             console.log(this.myClass)
             console.log(this.stats.currentVitality)
         }
 
         if (this.stats.currentVitality <= 0)
         {
-            this.onDeath(entityNum, attackingEntity)
+            await this.onDeath(entityNum, attackingEntity)
         }
+        return
     }
 }
 
@@ -375,13 +425,12 @@ class DefaultEnemy extends DefaultEntity
         this.bag = enemyType.startingBag
     }
 
-    onDeath(enemyNum, playerEntity)
+    async onDeath(enemyNum, playerEntity)
     {
-        console.log(enemyNum)
         console.log("DIED")
         playerEntity.onXPGain(this.enemyType.killXp)
         enemies.splice(enemyNum, 1)
-        removeEnemy(enemyNum)
+        await new Promise((resolve, reject) => {setTimeout(() => resolve(removeEnemy(enemyNum)), 1000)})
     }
 }
 

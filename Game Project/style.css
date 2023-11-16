@@ -21,6 +21,18 @@ main
     height: 40vw;
 }
 
+.enemy-damage-number
+{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: -120%;
+    left: -20%;
+    font-size: 3vw;
+    width: 150%;
+    height: 50%;
+}
+
 .enemy-img
 {
     width: 100%;
@@ -40,6 +52,7 @@ main
 
 .all-enemies
 {
+    position: relative;
     width: 15%;
     height: 60%;
 
