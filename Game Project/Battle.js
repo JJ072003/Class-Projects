@@ -33,7 +33,6 @@ function Start()
     window.addEventListener("keydown", onKeyPress)
 
     player.push(new Player(new WarriorClass()))
-    enemies.push(new DefaultEnemy(new Slime()), new DefaultEnemy(new RedSlime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()))
 
     initalizeEnemies()
 }
@@ -41,6 +40,11 @@ function Start()
 
 function initalizeEnemies()
 {
+    for (let i = getRandNum(1, 4); i <= 4; i++) 
+    {
+        enemies.push(new DefaultEnemy(new Slime()))
+    }
+
     for (let i = 1; i <= enemies.length; i++) 
     {
         let enemyEl = document.createElement('div')
@@ -84,37 +88,7 @@ function onKeyPress(event)
     let activeOption = onArrowKeys(event.key.toUpperCase())
     
     onSpaceKey(event.key.toUpperCase(), activeOption)
-    {}
-    // if(event.key.toUpperCase() == " ")
-    // {
-    //     switch(activeOption.textContent.toUpperCase())
-    //     {
-    //         case "ATTACK":
-    //             selectionTarget = "#enemy"
-    //             activeOption.style.backgroundColor = 'gray'
-    //             selectorSkope = activeSkopes.enemySkope
-    //             console.log(selectorSkope)
-    //             isBarSelector = true
 
-    //         default:
-    //             break
-    //     }
-
-    //     switch(activeOption.id.toUpperCase().slice(0, -1))
-    //     {
-    //         case "ENEMY":
-    //             let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
-    //             player[0].attack(enemies[enemyPos], enemyPos)
-    //             activeOption.style.backgroundColor = 'gray'
-    //             selectionTarget = "#option"
-    //             selectorSkope = activeSkopes.optionsSkope
-    //             isBarSelector = false
-    //             enemysAttack()
-
-    //         default:
-    //             break
-    //     }
-    // }
     onButtonRunning = false
 }
 
