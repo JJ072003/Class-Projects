@@ -42,7 +42,15 @@ function initalizeEnemies()
 {
     for (let i = getRandNum(1, 4); i <= 4; i++) 
     {
-        enemies.push(new DefaultEnemy(new Slime()))
+        let enemyProbablity = getRandNum(1, 100)
+        if(enemyProbablity <= 90)
+        {
+            enemies.push(new DefaultEnemy(new Slime()))
+        }
+        else if (enemyProbablity > 90)
+        {
+            enemies.push(new DefaultEnemy(new RedSlime()))
+        }
     }
 
     for (let i = 1; i <= enemies.length; i++) 
