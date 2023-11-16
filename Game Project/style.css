@@ -21,6 +21,12 @@ main
     height: 40vw;
 }
 
+.enemy-img
+{
+    width: 100%;
+    height: 100%;
+}
+
 .fighter-container
 {
     display: flex;

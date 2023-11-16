@@ -9,6 +9,7 @@ let selectorSkope = 4
 let selectionTarget = '#option'
 
 let isBarSelector = false
+let onButtonRunning = false
 
 const enemyContEl = document.querySelector("#enemy-container")
 
@@ -32,7 +33,8 @@ function Start()
     window.addEventListener("keydown", onKeyPress)
 
     player.push(new Player(new WarriorClass()))
-    enemies.push(new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()))
+    enemies.push(new DefaultEnemy(new Slime()), new DefaultEnemy(new RedSlime()), new DefaultEnemy(new Slime()), new DefaultEnemy(new Slime()))
+
     initalizeEnemies()
 }
 
@@ -44,6 +46,12 @@ function initalizeEnemies()
         let enemyEl = document.createElement('div')
         enemyEl.className = "all-enemies"
         enemyEl.id = 'enemy' + i
+
+        let enemyImg = document.createElement('img')
+        enemyImg.className = "enemy-img"
+        enemyImg.setAttribute('src', 'Images/' + enemies[i-1].enemyType.enemyType + '.png')
+        enemyEl.appendChild(enemyImg)
+
         enemyContEl.appendChild(enemyEl)
     }
 
@@ -66,8 +74,90 @@ function removeEnemy(enemyID)
 
 function onKeyPress(event)
 {
+    if(onButtonRunning)
+    {
+        return
+    }
+    onButtonRunning = true
     let previousSelect = null
-    switch(event.key.toUpperCase())
+
+    let activeOption = onArrowKeys(event.key.toUpperCase())
+    
+    onSpaceKey(event.key.toUpperCase(), activeOption)
+    {}
+    // if(event.key.toUpperCase() == " ")
+    // {
+    //     switch(activeOption.textContent.toUpperCase())
+    //     {
+    //         case "ATTACK":
+    //             selectionTarget = "#enemy"
+    //             activeOption.style.backgroundColor = 'gray'
+    //             selectorSkope = activeSkopes.enemySkope
+    //             console.log(selectorSkope)
+    //             isBarSelector = true
+
+    //         default:
+    //             break
+    //     }
+
+    //     switch(activeOption.id.toUpperCase().slice(0, -1))
+    //     {
+    //         case "ENEMY":
+    //             let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+    //             player[0].attack(enemies[enemyPos], enemyPos)
+    //             activeOption.style.backgroundColor = 'gray'
+    //             selectionTarget = "#option"
+    //             selectorSkope = activeSkopes.optionsSkope
+    //             isBarSelector = false
+    //             enemysAttack()
+
+    //         default:
+    //             break
+    //     }
+    // }
+    onButtonRunning = false
+}
+
+
+function onSpaceKey(keyPress, activeOption)
+{
+    if(keyPress == " ")
+    {
+        switch(activeOption.textContent.toUpperCase())
+        {
+            case "ATTACK":
+                selectionTarget = "#enemy"
+                activeOption.style.backgroundColor = 'gray'
+                selectorSkope = activeSkopes.enemySkope
+                console.log(selectorSkope)
+                isBarSelector = true
+
+            default:
+                break
+        }
+
+        switch(activeOption.id.toUpperCase().slice(0, -1))
+        {
+            case "ENEMY":
+                let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
+                player[0].attack(enemies[enemyPos], enemyPos)
+                activeOption.style.backgroundColor = 'gray'
+                selectionTarget = "#option"
+                selectorSkope = activeSkopes.optionsSkope
+                isBarSelector = false
+                enemysAttack()
+
+            default:
+                break
+        }
+    }
+}
+
+
+function onArrowKeys(keyPress)
+{
+    let previousSelect = null
+    switch(keyPress)
     {
         case "ARROWUP":
             if(selectionCords > 2 && !isBarSelector)
@@ -114,35 +204,15 @@ function onKeyPress(event)
 
     let activeOption = document.querySelector(selectionTarget + selectionCords)
     activeOption.style.backgroundColor = "blue"
+    return activeOption
+}
 
-    if(event.key.toUpperCase() == " ")
+
+function enemysAttack()
+{
+    for (const enemy of enemies) 
     {
-        switch(activeOption.textContent.toUpperCase())
-        {
-            case "ATTACK":
-                selectionTarget = "#enemy"
-                activeOption.style.backgroundColor = 'gray'
-                selectorSkope = activeSkopes.enemySkope
-                console.log(selectorSkope)
-                isBarSelector = true
-
-            default:
-                break
-        }
-
-        switch(activeOption.id.toUpperCase().slice(0, -1))
-        {
-            case "ENEMY":
-                let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
-                player[0].attack(enemies[enemyPos], enemyPos)
-                activeOption.style.backgroundColor = 'gray'
-                selectionTarget = "#option"
-                selectorSkope = activeSkopes.optionsSkope
-                isBarSelector = false
-
-            default:
-                break
-        }
+        enemy.attack(player[0])
     }
 }
 
@@ -247,6 +317,10 @@ class DefaultEntity
                         break
                 }
             }
+            else
+            {
+                return (this.stats.strength / 10) * 5
+            }
         }
     }
 
@@ -260,6 +334,7 @@ class DefaultEntity
         if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
             this.stats.currentVitality -= damage
+            console.log(this.myClass)
             console.log(this.stats.currentVitality)
         }
 
@@ -282,7 +357,7 @@ class Player extends DefaultEntity
 
     onDeath(playerNum)
     {
-
+        alert('Game Over')
     }
 }
 
@@ -331,6 +406,17 @@ class Slime extends EntityClass
     constructor()
     {
         super(new Stats(5, 2, 2, 1, 0, 5), ["Flurry Of Blows"], null, null, null)
+        this.enemyType = "Blue-Slime"
+    }
+}
+
+
+class RedSlime extends EntityClass
+{
+    constructor()
+    {
+        super(new Stats(10, 7, 6, 3, 0, 20), ["Flurry Of Blows"], null, null, null)
+        this.enemyType = "Red-Slime"
     }
 }
 
@@ -339,7 +425,7 @@ class WarriorClass extends EntityClass
 {
     constructor()
     {
-        super(new Stats(20, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword], new Bag())
+        super(new Stats(30, 12, 10, 8, 5, 25), null, ["Simple"], [globalWeapons.shortSword], new Bag())
     }
 }
 
