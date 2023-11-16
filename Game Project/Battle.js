@@ -122,12 +122,20 @@ function onSpaceKey(keyPress, activeOption)
         {
             case "ENEMY":
                 let enemyPos = activeOption.id.charAt(activeOption.id.length - 1) - 1
-                player[0].attack(enemies[enemyPos], enemyPos)
+                player[0].attack(enemies[enemyPos], enemyPos, player[0])
                 activeOption.style.backgroundColor = 'gray'
                 selectionTarget = "#option"
                 selectorSkope = activeSkopes.optionsSkope
                 isBarSelector = false
-                enemysAttack()
+                if(enemies.length != 0)
+                {
+                    enemysAttack()
+                }
+                else
+                {
+                    alert('Battle Won!')
+                    initalizeEnemies()
+                }
 
             default:
                 break
@@ -246,9 +254,9 @@ class DefaultEntity
     }
 
 
-    attack(enemy, enemyNum)
+    attack(enemy, enemyNum, attackerEntity)
     {
-        enemy.onHit(this.getDamage(), enemyNum)
+        enemy.onHit(this.getDamage(), enemyNum, attackerEntity)
     }
 
     equiptItems(equipting)
@@ -311,7 +319,7 @@ class DefaultEntity
 
     }
 
-    onHit(damage, entityNum)
+    onHit(damage, entityNum, attackingEntity)
     {
         if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
@@ -322,7 +330,7 @@ class DefaultEntity
 
         if (this.stats.currentVitality <= 0)
         {
-            this.onDeath(entityNum)
+            this.onDeath(entityNum, attackingEntity)
         }
     }
 }
@@ -335,9 +343,21 @@ class Player extends DefaultEntity
         super(myClass.startingGear, myClass.defaultStats)
         this.myClass = myClass
         this.bag = myClass.startingBag
+        this.xp = 0
     }
 
-    onDeath(playerNum)
+    onXPGain(xpAmmount)
+    {
+        console.log(xpAmmount)
+        this.xp += xpAmmount
+        console.log(this.xp + " xp")
+        if(this.xp >= 50)
+        {
+            console.log('Level Up!')
+        }
+    }
+
+    onDeath(playerNum, attackingEnemy)
     {
         alert('Game Over')
     }
@@ -353,10 +373,11 @@ class DefaultEnemy extends DefaultEntity
         this.bag = enemyType.startingBag
     }
 
-    onDeath(enemyNum)
+    onDeath(enemyNum, playerEntity)
     {
         console.log(enemyNum)
         console.log("DIED")
+        playerEntity.onXPGain(this.enemyType.killXp)
         enemies.splice(enemyNum, 1)
         removeEnemy(enemyNum)
     }
@@ -389,6 +410,7 @@ class Slime extends EntityClass
     {
         super(new Stats(5, 2, 2, 1, 0, 5), ["Flurry Of Blows"], null, null, null)
         this.enemyType = "Blue-Slime"
+        this.killXp = 20
     }
 }
 
@@ -399,6 +421,7 @@ class RedSlime extends EntityClass
     {
         super(new Stats(10, 7, 6, 3, 0, 20), ["Flurry Of Blows"], null, null, null)
         this.enemyType = "Red-Slime"
+        this.killXp = 50
     }
 }
 
