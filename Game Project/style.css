@@ -59,6 +59,37 @@ main
     background-color: red;
 }
 
+.player-damage-number
+{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: -120%;
+    left: -20%;
+    color: red;
+    font-size: 3vw;
+    width: 150%;
+    height: 50%;
+}
+
+.player-hp-bar-cont
+{
+    display: grid;
+
+    position: absolute;
+    top: -30%;
+
+    width: 100%;
+    height: 20%;
+}
+
+.player-hp-bar-total
+{
+    grid-column: 1 / 2;
+    height: 100%;
+    background-color: red;
+}
+
 .fighter-container
 {
     display: flex;

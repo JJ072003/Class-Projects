@@ -100,8 +100,22 @@ async function initalizePlayers()
         let playerIMGEL = document.createElement('img')
         playerIMGEL.className = 'entity-img'
         playerIMGEL.setAttribute('src', 'Images/' + player[i-1].myClass.playerType + '.png')
-
         playerEL.appendChild(playerIMGEL)
+
+        let playerDmgNum = document.createElement('h1')
+        playerDmgNum.className = 'player-damage-number'
+        playerEL.appendChild(playerDmgNum)
+
+        let playerDmgBarCont = document.createElement('div')
+        playerDmgBarCont.className = "player-hp-bar-cont"
+
+        let playerDmgBarTotal = document.createElement('div')
+        playerDmgBarTotal.className = "player-hp-bar-total"
+
+        playerDmgBarCont.appendChild(playerDmgBarTotal)
+
+        playerEL.appendChild(playerDmgBarCont)
+
         playerContEL.appendChild(playerEL)
     }
 }
@@ -218,9 +232,10 @@ async function displayDamageNumber(damage, damagedEl, entity)
 {
     try
     {
-        console.log(damage)
-    damagedEl.children[1].textContent = damage
-    damagedEl.children[2].style.gridTemplateColumns = (clampNum(0, 9999999999999, entity.stats.currentVitality)) + "fr " + -(clampNum(0, 9999999999999, entity.stats.currentVitality) - entity.stats.totalVitality) + 'fr'
+        console.log(damage + " damage taken")
+        console.log(damagedEl)
+        damagedEl.children[1].textContent = damage
+        damagedEl.children[2].style.gridTemplateColumns = (clampNum(0, 9999999999999, entity.stats.currentVitality)) + "fr " + -(clampNum(0, 9999999999999, entity.stats.currentVitality) - entity.stats.totalVitality) + 'fr'
     }
     catch(error)
     {console.log(error)}
@@ -288,8 +303,8 @@ async function enemysAttack()
     {
         console.log('test')
         await new Promise((resolve, reject) => {setTimeout(() => 
-            {resolve(enemy.attack(player[0]))},
-             100 * (enemy + 1))})
+            {resolve(enemy.attack(player[0], 0, enemies[enemy]))},
+             10000 * (enemy + 1))})
     }
 }
 
@@ -343,7 +358,7 @@ class DefaultEntity
 
     async attack(enemy, enemyNum, attackerEntity)
     {
-        await enemy.onHit(this.getDamage(), enemyNum, attackerEntity, enemy)
+        await enemy.onHit(this.getDamage(), enemyNum, attackerEntity)
     }
 
     equiptItems(equipting)
@@ -419,7 +434,7 @@ class DefaultEntity
             
             }
             catch(error){}
-
+            console.log(this.getEntityELType() + (entityNum + 1))
             await displayDamageNumber(damage, document.querySelector(this.getEntityELType() + (entityNum + 1)), this.getEntityArray()[entityNum])
             console.log('success')
                 
