@@ -70,6 +70,18 @@ async function initalizeEnemies()
         enemyDmgNum.className = 'entity-damage-number'
         enemyEl.appendChild(enemyDmgNum)
 
+        let enemyDmgBarCont = document.createElement('div')
+        enemyDmgBarCont.className = "entity-hp-bar-cont"
+
+        let enemyDmgBarTotal = document.createElement('div')
+        enemyDmgBarTotal.className = "entity-hp-bar-total"
+
+        enemyDmgBarCont.style.gridTemplateColumns = enemies[i-1].stats.currentVitality + "fr " + -(enemies[i-1].stats.currentVitality - enemies[i-1].stats.totalVitality) + 'fr'
+
+        enemyDmgBarCont.appendChild(enemyDmgBarTotal)
+
+        enemyEl.appendChild(enemyDmgBarCont)
+
         enemyContEl.appendChild(enemyEl)
     }
 
@@ -189,7 +201,7 @@ async function onEnemySelect(activeOption)
     }
     else
     {
-        await new Promise((resolve, reject) => {setTimeout(() => resolve(alert('Battle Won!')), 1) } )
+        await new Promise((resolve, reject) => {setTimeout(() => resolve(alert('Battle Won!')), 5) } )
 
         await new Promise((resolve, reject) => {setTimeout(() => resolve(initalizeEnemies()), 2)})
     }
@@ -202,15 +214,16 @@ function onBattleWin()
 }
 
 
-async function displayDamageNumber(damage, damagedEl)
+async function displayDamageNumber(damage, damagedEl, entity)
 {
-    console.log(damagedEl)
     try
     {
-    damagedEl.lastChild.textContent = damage
+        console.log(damage)
+    damagedEl.children[1].textContent = damage
+    damagedEl.children[2].style.gridTemplateColumns = (clampNum(0, 9999999999999, entity.stats.currentVitality)) + "fr " + -(clampNum(0, 9999999999999, entity.stats.currentVitality) - entity.stats.totalVitality) + 'fr'
     }
     catch(error)
-    {}
+    {console.log(error)}
     return
 }
 
@@ -330,7 +343,7 @@ class DefaultEntity
 
     async attack(enemy, enemyNum, attackerEntity)
     {
-        await enemy.onHit(this.getDamage(), enemyNum, attackerEntity)
+        await enemy.onHit(this.getDamage(), enemyNum, attackerEntity, enemy)
     }
 
     equiptItems(equipting)
@@ -398,10 +411,16 @@ class DefaultEntity
         if(clampNum(0, 1, ((getRandNum(0, 15) - 5) / 10) + clampNum(0, 0.9, this.stats.defence / 1000)) > 0)
         {
             this.stats.currentVitality -= damage
+            console.log(entityNum)
+            console.log(document.querySelector(this.getEntityELType() + (entityNum + 1)))
+
+            try
+            {
             
-            console.log("entity Num " + entityNum)
-            console.log(selectionTarget)
-            await displayDamageNumber(damage, document.querySelector(selectionTarget + (entityNum + 1)))
+            }
+            catch(error){}
+
+            await displayDamageNumber(damage, document.querySelector(this.getEntityELType() + (entityNum + 1)), this.getEntityArray()[entityNum])
             console.log('success')
                 
             console.log(this.myClass)
@@ -438,6 +457,16 @@ class Player extends DefaultEntity
         }
     }
 
+    getEntityArray()
+    {
+        return player
+    }
+
+    getEntityELType()
+    {
+        return '#player'
+    }
+
     onDeath(playerNum, attackingEnemy)
     {
         setTimeout(() => {alert('Game Over')}, 1)
@@ -452,6 +481,16 @@ class DefaultEnemy extends DefaultEntity
         super(enemyType.startingGear, enemyType.defaultStats)
         this.enemyType = enemyType
         this.bag = enemyType.startingBag
+    }
+
+    getEntityArray()
+    {
+        return enemies
+    }
+
+    getEntityELType()
+    {
+        return '#enemy'
     }
 
     async onDeath(enemyNum, playerEntity)
