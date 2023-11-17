@@ -1,11 +1,23 @@
 RPG Battle
 
-------this is a simple RPG battle template made to run on a web server or live server-------
 
+Technologies
+- Simple html, css, and javascript
+- Async
 
 
 What It Does
-1. highlight different options
-2. select an enemy to attack
-3. chance to miss and dodge
-4. random enemies per battle
+- highlight different options
+- select an enemy to attack
+- chance to miss and dodge
+- random enemies per battle
+
+
+Aproach
+- Most logic is done within classes
+- Segmented logic to make it more readable
+- Easy to scale; easily creating more enemies, classes, weapons etc. 
+
+
+Live Server
+https://htmlpreview.github.io/?https://github.com/JJ072003/Class-Projects/blob/master/Game%20Project/index.html
